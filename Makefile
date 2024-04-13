@@ -45,7 +45,7 @@ workspace:
 	@docker compose exec app /bin/bash
 
 db:
-	@docker compose exec app php artisan migrate:fresh
+	@docker compose exec app php artisan migrate --force
 
 stats:
 	@docker stats

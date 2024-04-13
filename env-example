@@ -3,9 +3,8 @@ HTTPS_PORTAL_VERSION=1
 PIPELINE_PHP_VERSION=8.1
 
 # Variables de configuración de la base de datos
-MYSQL_ROOT_PASSWORD=12345Abcde
 MYSQL_DATABASE=blog
-MYSQL_USER=blog
+MYSQL_USER=root
 MYSQL_PASSWORD=12345Abcde
 
 # Configuración del proxy inverso
