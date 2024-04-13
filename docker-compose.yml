@@ -28,3 +28,8 @@ services:
 
 volumes:
   https-portal_certs:
+
+networks:
+  default:
+    name: ${EXTERNAL_NETWORK}
+    external: true

@@ -14,3 +14,6 @@ HTTPS_PORTAL_MODE=local
 
 # Prefijo para los contenedores
 COMPOSE_PROJECT_NAME=blog-vault
+
+# Red de Vault
+EXTERNAL_NETWORK=vault-network
