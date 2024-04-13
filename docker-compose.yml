@@ -1,6 +1,7 @@
 services:
   https-portal:
     image: steveltn/https-portal:${HTTPS_PORTAL_VERSION}
+    hostname: https-portal
     environment:
       DOMAINS: >
         ${HTTPS_PORTAL_HOSTNAME} -> http://app:80,
@@ -23,6 +24,7 @@ services:
         - MYSQL_DATABASE=${MYSQL_DATABASE}
         - MYSQL_USER=${MYSQL_USER}
         - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+    hostname: app
     expose:
       - 80
 
