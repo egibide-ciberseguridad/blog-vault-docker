@@ -1,5 +1,3 @@
-version: '3.7'
-
 services:
   https-portal:
     image: steveltn/https-portal:${HTTPS_PORTAL_VERSION}
@@ -16,7 +14,6 @@ services:
       - "443:443"
     depends_on:
       - app
-
   app:
     build:
       context: .
@@ -28,28 +25,6 @@ services:
         - MYSQL_PASSWORD=${MYSQL_PASSWORD}
     expose:
       - 80
-    depends_on:
-      mariadb:
-        condition: service_healthy
-
-  mariadb:
-    image: mariadb:${MARIADB_VERSION}
-    environment:
-      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
-      - MYSQL_DATABASE=${MYSQL_DATABASE}
-      - MYSQL_USER=${MYSQL_USER}
-      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
-    volumes:
-      - mariadb_data:/var/lib/mysql
-    expose:
-      - 3306
-    healthcheck:
-      test: [ "CMD", "mysqladmin", "ping", "--silent" ]
-      interval: 5s
-      timeout: 10s
-      retries: 3
-      start_period: 60s
 
 volumes:
-  mariadb_data:
   https-portal_certs:

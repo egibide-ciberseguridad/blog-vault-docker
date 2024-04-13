@@ -1,10 +1,5 @@
 ARG PHP_VERSION
 
-# https://stackoverflow.com/a/69948610/14378620
-FROM alpine/git:latest
-WORKDIR /clone-workspace
-RUN git clone https://github.com/egibide-ciberseguridad/blog.git laravel-blog
-
 # https://shouts.dev/dockerize-a-laravel-app-with-apache-mariadb#step1
 FROM php:${PHP_VERSION}-apache
 
@@ -41,7 +36,7 @@ COPY vhost.conf /etc/apache2/sites-available/000-default.conf
 
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
-COPY --from=0 /clone-workspace/laravel-blog/ /var/www/html
+COPY ./laravel-blog/ /var/www/html
 
 RUN chown -R www-data:www-data /var/www/html && a2enmod rewrite
 
