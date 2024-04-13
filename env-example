@@ -1,0 +1,17 @@
+# Versiones de los contenedores
+HTTPS_PORTAL_VERSION=1
+PIPELINE_PHP_VERSION=8.1
+MARIADB_VERSION=10.6
+
+# Variables de configuración de la base de datos
+MYSQL_ROOT_PASSWORD=12345Abcde
+MYSQL_DATABASE=blog
+MYSQL_USER=blog
+MYSQL_PASSWORD=12345Abcde
+
+# Configuración del proxy inverso
+HTTPS_PORTAL_HOSTNAME=laravel-blog.test
+HTTPS_PORTAL_MODE=local
+
+# Prefijo para los contenedores
+COMPOSE_PROJECT_NAME=pipeline-laravel
