@@ -70,3 +70,5 @@ RUN npm run build
 USER root
 
 RUN apt install -y iproute2 iputils-ping
+
+USER www-data
