@@ -4,6 +4,7 @@ namespace App\Http\Middleware;
 
 use Carbon\Carbon;
 use Closure;
+use Exception;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ClientException;
 use Illuminate\Http\Request;
@@ -71,52 +72,87 @@ class VaultCredentials
 
     public function handle(Request $request, Closure $next)
     {
-        $estado_concesion = Cache::get('estado_concesion');
+        $nueva_concesion = true;
 
-        if (isset($estado_concesion)) {
-            $lease_id = $estado_concesion['data']['id'];
-        } else {
-            $concesion ??= $this->vault_read(config('vault.db_credential'));
+        $id_concesion = Cache::get('id_concesion');
 
-            if (!isset($concesion)) {
-                abort(500, "Error de Vault");
+        if (isset($id_concesion)) {
+            $estado_concesion = $this->leer_estado($id_concesion);
+            if (isset($estado_concesion)) {
+                $ttl = $this->tiempo_restante($estado_concesion['data']['expire_time']);
+                if ($ttl > 60) {
+                    $nueva_concesion = false;
+                } else {
+                    $this->revocar_concesion($id_concesion);
+                    Cache::forget('id_concesion');
+                }
             }
-
-            $username = $concesion['data']['username'];
-            $password = $concesion['data']['password'];
-
-            Storage::disk('temp')->put('db_username', $username);
-            Storage::disk('temp')->put('db_password', $password);
-
-            $lease_id = $concesion['lease_id'];
-            $estado_concesion = Cache::remember('estado_concesion', 60, function () use ($lease_id) {
-                return $this->vault_write('sys/leases/lookup', [
-                    "lease_id" => $lease_id,
-                ]);
-            });
         }
 
-        $username = Storage::disk('temp')->get('db_username');
-        $password = Storage::disk('temp')->get('db_password');
-        Config::set('database.connections.mysql.username', $username);
-        Config::set('database.connections.mysql.password', $password);
+        if ($nueva_concesion) {
+            $concesion = $this->vault_read(config('vault.db_credential'));
 
-        $fecha_caducidad = Carbon::parse($estado_concesion['data']['expire_time']);
+            if (!isset($concesion)) {
+                throw new Exception("Error de Vault: no se han podido obtener credenciales");
+            }
 
-        $ttl = now()->diffInSeconds($fecha_caducidad, false);
+            $this->guardar_configuracion($concesion['data']['username'], 'db_username');
+            $this->guardar_configuracion($concesion['data']['password'], 'db_password');
 
-        if ($ttl < 170) {
-            $this->vault_write('sys/leases/renew', [
-                "lease_id" => $lease_id,
-            ]);
-            Cache::forget('estado_concesion');
-            Cache::remember('estado_concesion', 60, function () use ($lease_id) {
-                return $this->vault_write('sys/leases/lookup', [
-                    "lease_id" => $lease_id,
-                ]);
-            });
+            $id_concesion = $concesion['lease_id'];
+            $estado_concesion = $this->leer_estado($id_concesion);
+            Cache::put('id_concesion', $id_concesion);
+        }
+
+        $this->cargar_configuracion('database.connections.mysql.username', 'db_username');
+        $this->cargar_configuracion('database.connections.mysql.password', 'db_password');
+
+        $ttl = $this->tiempo_restante($estado_concesion['data']['expire_time']);
+        if ($ttl < 60) {
+            $this->renovar_concesion($id_concesion);
         }
 
         return $next($request);
+    }
+
+    public function renovar_concesion(mixed $lease_id): void
+    {
+        $this->vault_write('sys/leases/renew', [
+            "lease_id" => $lease_id,
+        ]);
+    }
+
+    public function revocar_concesion(mixed $lease_id): void
+    {
+        $this->vault_write('sys/leases/revoke', [
+            "lease_id" => $lease_id,
+        ]);
+    }
+
+    public function leer_estado(mixed $lease_id): mixed
+    {
+        $estado_concesion = $this->vault_write('sys/leases/lookup', [
+            "lease_id" => $lease_id,
+        ]);
+        return $estado_concesion;
+    }
+
+    public function tiempo_restante($expire_time): int|float
+    {
+        $fecha_caducidad = Carbon::parse($expire_time);
+
+        $ttl = now()->diffInSeconds($fecha_caducidad, false);
+        return $ttl;
+    }
+
+    public function cargar_configuracion($config_key, $temp_file): void
+    {
+        $username = Storage::disk('temp')->get($temp_file);
+        Config::set($config_key, $username);
+    }
+
+    public function guardar_configuracion($config_value, $temp_file): void
+    {
+        Storage::disk('temp')->put($temp_file, $config_value);
     }
 }
