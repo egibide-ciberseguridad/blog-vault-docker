@@ -104,7 +104,6 @@ class VaultCredentials
         $fecha_caducidad = Carbon::parse($estado_concesion['data']['expire_time']);
 
         $ttl = now()->diffInSeconds($fecha_caducidad, false);
-        dump($ttl);
 
         if ($ttl < 170) {
             $this->vault_write('sys/leases/renew', [
