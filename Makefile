@@ -36,7 +36,7 @@ stop:
 restart: stop start
 
 build:
-	@docker compose build
+	@docker compose build --pull
 
 logs:
 	@docker compose logs app
