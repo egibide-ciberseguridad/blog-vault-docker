@@ -25,12 +25,13 @@ class VaultCredentials
             $estado_concesion = $this->leer_estado($id_concesion);
             if (isset($estado_concesion)) {
                 $ttl = $this->tiempo_restante($estado_concesion['data']['expire_time']);
-                if ($ttl > 60) {
-                    $nueva_concesion = false;
-                } else {
-                    $this->revocar_concesion($id_concesion);
-                    Cache::forget('id_concesion');
+                if ($ttl < 60) {
+                    $this->renovar_concesion($id_concesion);
                 }
+                $nueva_concesion = false;
+            } else {
+                $this->revocar_concesion($id_concesion);
+                Cache::forget('id_concesion');
             }
         }
 
@@ -45,17 +46,11 @@ class VaultCredentials
             $this->guardar_configuracion($concesion['data']['password'], 'db_password');
 
             $id_concesion = $concesion['lease_id'];
-            $estado_concesion = $this->leer_estado($id_concesion);
             Cache::put('id_concesion', $id_concesion);
         }
 
         $this->cargar_configuracion('database.connections.mysql.username', 'db_username');
         $this->cargar_configuracion('database.connections.mysql.password', 'db_password');
-
-        $ttl = $this->tiempo_restante($estado_concesion['data']['expire_time']);
-        if ($ttl < 60) {
-            $this->renovar_concesion($id_concesion);
-        }
 
         return $next($request);
     }
