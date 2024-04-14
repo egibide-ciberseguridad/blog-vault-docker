@@ -45,7 +45,7 @@ workspace:
 	@docker compose exec app /bin/bash
 
 db:
-	@docker compose exec app php artisan migrate --force
+	@read -p "Username: " USER && read -s -p "Password: " PASS && DB_USERNAME=$$USER DB_PASSWORD=$$PASS docker compose exec app php artisan migrate --force
 
 stats:
 	@docker stats
