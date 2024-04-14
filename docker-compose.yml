@@ -27,6 +27,8 @@ services:
     hostname: app
     expose:
       - 80
+    tmpfs:
+      - /var/www/html/storage/temp:mode=770,size=1m,uid=33,gid=33
 
 volumes:
   https-portal_certs:
