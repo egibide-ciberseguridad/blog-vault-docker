@@ -76,7 +76,7 @@ class VaultCredentials
         if (isset($estado_concesion)) {
             $lease_id = $estado_concesion['data']['id'];
         } else {
-            $concesion ??= $this->vault_read('egibide/blog/database/creds/blog-short');
+            $concesion ??= $this->vault_read(config('vault.db.credential'));
 
             if (!isset($concesion)) {
                 abort(500, "Error de Vault");
