@@ -78,6 +78,10 @@ class VaultCredentials
         } else {
             $concesion ??= $this->vault_read('egibide/blog/database/creds/blog-short');
 
+            if (!isset($concesion)) {
+                abort(500, "Error de Vault");
+            }
+
             $username = $concesion['data']['username'];
             $password = $concesion['data']['password'];
 
