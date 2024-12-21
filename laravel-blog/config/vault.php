@@ -13,6 +13,7 @@ function docker_secret(string $name): Closure
 }
 
 return [
+    'enabled' => env('VAULT_ENABLED', false),
     'url' => env('VAULT_ADDR', 'http://vault-server:8200'),
     'token' => env('VAULT_TOKEN', docker_secret('vault_token')),
     'db_credential' => env('VAULT_DB_CREDENTIAL', 'database/creds/blog'),

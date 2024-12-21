@@ -26,6 +26,7 @@ services:
         - MYSQL_PASSWORD=${MYSQL_PASSWORD}
     hostname: app
     environment:
+      - VAULT_ENABLED=${VAULT_ENABLED}
       - VAULT_ADDR=${VAULT_ADDR}
       - VAULT_DB_CREDENTIAL=${VAULT_DB_CREDENTIAL}
     secrets:

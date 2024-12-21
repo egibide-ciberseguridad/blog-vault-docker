@@ -17,6 +17,9 @@ class VaultCredentials
 {
     public function handle(Request $request, Closure $next)
     {
+        if (!config('vault.enabled'))
+            return $next($request);
+
         $nueva_concesion = true;
 
         $id_concesion = Cache::get('id_concesion');
