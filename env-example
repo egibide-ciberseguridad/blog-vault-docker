@@ -18,6 +18,7 @@ COMPOSE_PROJECT_NAME=blog-vault
 EXTERNAL_NETWORK=vault-network
 
 # Datos de conexión a Vault
+VAULT_ENABLED=false
 VAULT_ADDR=http://vault-server:8200
-VAULT_TOKEN=root
+VAULT_TOKEN=12345Abcde
 VAULT_DB_CREDENTIAL=database/creds/blog
