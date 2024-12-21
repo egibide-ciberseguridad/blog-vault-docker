@@ -27,8 +27,9 @@ services:
     hostname: app
     environment:
       - VAULT_ADDR=${VAULT_ADDR}
-      - VAULT_TOKEN=${VAULT_TOKEN}
       - VAULT_DB_CREDENTIAL=${VAULT_DB_CREDENTIAL}
+    secrets:
+      - vault_token
     expose:
       - 80
     tmpfs:
@@ -41,3 +42,7 @@ networks:
   default:
     name: ${EXTERNAL_NETWORK}
     external: true
+
+secrets:
+  vault_token:
+    environment: VAULT_TOKEN
