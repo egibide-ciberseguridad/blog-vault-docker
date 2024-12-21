@@ -26,7 +26,7 @@ _urls:
 	@echo ---------------------------------------
 
 _start-command:
-	@read -s -p "Token: " TOKEN && VAULT_TOKEN=$$TOKEN docker compose up -d --remove-orphans
+	@./app-start.sh
 
 start: _start-command _urls
 
