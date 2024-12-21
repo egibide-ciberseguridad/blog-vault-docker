@@ -1,4 +1,4 @@
-ARG PHP_VERSION
+ARG PHP_VERSION=8.1
 
 # https://shouts.dev/dockerize-a-laravel-app-with-apache-mariadb#step1
 FROM php:${PHP_VERSION}-apache
