@@ -43,7 +43,7 @@ RUN chown -R www-data:www-data /var/www && a2enmod rewrite
 USER www-data
 
 # Inicializar la aplicación de Laravel
-RUN composer install --no-dev
+RUN composer install
 
 RUN cp .env.example .env
 
