@@ -1,6 +1,7 @@
 services:
   https-portal:
     image: steveltn/https-portal:${HTTPS_PORTAL_VERSION}
+    stop_signal: SIGINT
     hostname: https-portal
     environment:
       DOMAINS: >
