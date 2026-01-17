@@ -1,6 +1,6 @@
 # Versiones de los contenedores
 HTTPS_PORTAL_VERSION=1
-PIPELINE_PHP_VERSION=8.1
+PIPELINE_PHP_VERSION=8.5
 
 # Variables de configuración de la base de datos
 MYSQL_DATABASE=blog
