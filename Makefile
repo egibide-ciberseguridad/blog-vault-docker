@@ -21,9 +21,9 @@ help:
 
 _urls:
 	${info }
-	@echo ---------------------------------------
-	@echo [Blog] https://${HTTPS_PORTAL_HOSTNAME}
-	@echo ---------------------------------------
+	@echo --------------------------------
+	@echo [Blog] https://laravel-blog.test
+	@echo --------------------------------
 
 _start-command:
 	@./app-start.sh

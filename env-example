@@ -1,15 +1,10 @@
 # Versiones de los contenedores
-HTTPS_PORTAL_VERSION=1
 PIPELINE_PHP_VERSION=8.5
 
 # Variables de configuración de la base de datos
 MYSQL_DATABASE=blog
 MYSQL_USER=root
 MYSQL_PASSWORD=12345Abcde
-
-# Configuración del proxy inverso
-HTTPS_PORTAL_HOSTNAME=laravel-blog.test
-HTTPS_PORTAL_MODE=local
 
 # Prefijo para los contenedores
 COMPOSE_PROJECT_NAME=blog-vault

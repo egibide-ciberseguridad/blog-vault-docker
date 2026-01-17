@@ -1,21 +1,24 @@
 services:
-  https-portal:
-    image: steveltn/https-portal:${HTTPS_PORTAL_VERSION}
-    stop_signal: SIGINT
-    hostname: https-portal
-    environment:
-      DOMAINS: >
-        ${HTTPS_PORTAL_HOSTNAME} -> http://app:80,
-      CLIENT_MAX_BODY_SIZE: 1024M
-      SERVER_NAMES_HASH_BUCKET_SIZE: 1024
-      STAGE: ${HTTPS_PORTAL_MODE}
-    volumes:
-      - https-portal_certs:/var/lib/https-portal
+
+  traefik:
+    image: traefik:${TRAEFIK_VERSION:-3}
     ports:
       - "80:80"
       - "443:443"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.${COMPOSE_PROJECT_NAME}-dashboard.rule=Host(`${FQDN_TRAEFIK:-traefik.laravel-blog.test}`) && (PathPrefix(`/api`) || PathPrefix(`/dashboard`))"
+      - "traefik.http.routers.${COMPOSE_PROJECT_NAME}-dashboard.service=api@internal"
+      - "traefik.http.routers.${COMPOSE_PROJECT_NAME}-dashboard.entrypoints=websecure"
+      - "traefik.http.routers.${COMPOSE_PROJECT_NAME}-dashboard.tls=true"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ./traefik/traefik.yml:/etc/traefik/traefik.yml:ro
     depends_on:
       - app
+
   app:
     build:
       context: .
@@ -32,13 +35,14 @@ services:
       - VAULT_DB_CREDENTIAL=${VAULT_DB_CREDENTIAL}
     secrets:
       - vault_token
-    expose:
-      - 80
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.${COMPOSE_PROJECT_NAME}-app.rule=Host(`${FQDN_BLOG:-laravel-blog.test}`)"
+      - "traefik.http.routers.${COMPOSE_PROJECT_NAME}-app.entrypoints=websecure"
+      - "traefik.http.routers.${COMPOSE_PROJECT_NAME}-app.tls=true"
+      - "traefik.http.services.${COMPOSE_PROJECT_NAME}-app.loadbalancer.server.port=80"
     tmpfs:
       - /var/www/html/storage/temp:mode=770,size=1m,uid=33,gid=33
-
-volumes:
-  https-portal_certs:
 
 networks:
   default:
