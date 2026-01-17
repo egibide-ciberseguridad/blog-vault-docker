@@ -1,5 +1,5 @@
 # Versiones de los contenedores
-PIPELINE_PHP_VERSION=8.5
+PHP_VERSION=8.5
 
 # Variables de configuración de la base de datos
 MYSQL_DATABASE=blog
