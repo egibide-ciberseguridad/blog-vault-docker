@@ -9,15 +9,15 @@ endif
 
 help:
 	@echo Opciones:
-	@echo ---------------------------------------
-	@echo start / stop / restart
+	@echo --------------------------------
 	@echo build
-	@echo logs
-	@echo workspace
+	@echo start / stop / restart
 	@echo db
+	@echo workspace
+	@echo logs
 	@echo stats
 	@echo clean
-	@echo ---------------------------------------
+	@echo --------------------------------
 
 _urls:
 	${info }
